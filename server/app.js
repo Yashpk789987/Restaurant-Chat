@@ -7,7 +7,7 @@ var path = require('path');
 //////// IMPORTING ROUTES ///////////
 
 var userRouter = require('./routes/user.js');
-
+var notificationsRouter = require('./routes/notifications');
 //////// IMPORTING ROUTES ///////////
 
 ///////// VIEW ENGINE ///////////////
@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 /////// USING ROUTES /////
 app.use('/user', userRouter);
-
+app.use('/notifications', notificationsRouter);
 /////// USING ROUTES /////
 
 app.get('/', function(req, res) {
