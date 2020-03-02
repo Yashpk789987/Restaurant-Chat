@@ -6,7 +6,7 @@ import ChatInterface from './ChatInterface';
 import {socketurl} from '../helpers/baseurl';
 import io from 'socket.io-client';
 import firebase from 'react-native-firebase';
-import {Alert} from 'react-native';
+import {Alert, Platform} from 'react-native';
 
 const Stack = createStackNavigator();
 
@@ -51,8 +51,25 @@ class App extends React.Component {
     this.notificationListener = firebase
       .notifications()
       .onNotification(notification => {
-        const {title, body} = notification;
-        this.showAlert(title, body);
+        console.log('I am calling ...');
+        const local = new firebase.notifications.Notification()
+          .setNotificationId('notificationId')
+          .setTitle('My notification title')
+          .setBody('My notification body')
+          .setData({
+            key1: 'value1',
+            key2: 'value2',
+          });
+        local.android
+          .setChannelId('channelId')
+          .android.setSmallIcon('ic_launcher')
+          .android.setLargeIcon(
+            'https://png.pngtree.com/element_our/sm/20180327/sm_5aba147bcacf2.png',
+          )
+          .android.setBigPicture(
+            'https://png.pngtree.com/element_our/sm/20180327/sm_5aba147bcacf2.png',
+          );
+        firebase.notifications().displayNotification(local);
       });
 
     this.notificationOpenedListener = firebase

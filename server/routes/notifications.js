@@ -10,6 +10,8 @@ router.get('/push', function(req, res) {
     to:
       'fVUcmdqrCfQ:APA91bH6IzLT0Lt3gW9XUl_GgWB68vyS9wi6vt-ZCfZozpSTBccXLkMPvUrCFzXZU_NpRySkHmNNyQGAAjWtTBb8rwIFkH4d7gVQSoHlyS4KWHHx5y3sa9VTjw0mGEEKoENeoTXtlApt',
     notification: {
+      subtitle: 'subtitle',
+      sound: 'default',
       title: 'Title of your push notification',
       body: 'Body of your push notification',
       image:
