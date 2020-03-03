@@ -70,12 +70,11 @@ export default class CustomWebView extends React.Component {
   };
 
   handleLinks = data => {
-    console.log(data.url);
     if (data.url.includes('home.php')) {
-      let params = data.url.split('=');
-      let table_name = 'table_name';
-      let username = params[1];
-      let table_id = 'table_id';
+      let params = data.url.split('/');
+      let username = decodeURI(params[params.length - 1]);
+      let table_name = decodeURI(params[params.length - 2]);
+      let table_id = params[params.length - 3];
       this.props.connectToSocketServer(table_id, table_name, username);
     } else if (data.url.includes('chatcode')) {
       this.props.navigation.navigate('ChatList');

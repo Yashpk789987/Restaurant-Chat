@@ -15,6 +15,8 @@ class App extends React.Component {
     socket_object: new io(),
     tables: [],
     username: '',
+    table_name: '',
+    table_id: -1,
   };
 
   componentDidMount() {
@@ -51,32 +53,25 @@ class App extends React.Component {
     this.notificationListener = firebase
       .notifications()
       .onNotification(notification => {
-        console.log('I am calling ...');
         const local = new firebase.notifications.Notification()
           .setNotificationId('notificationId')
-          .setTitle('My notification title')
-          .setBody('My notification body')
+          .setTitle(notification.title)
+          .setSubtitle('New Message')
+          .setBody(notification.body)
           .setData({
             key1: 'value1',
             key2: 'value2',
           });
         local.android
           .setChannelId('channelId')
-          .android.setSmallIcon('ic_launcher')
-          .android.setLargeIcon(
-            'https://png.pngtree.com/element_our/sm/20180327/sm_5aba147bcacf2.png',
-          )
-          .android.setBigPicture(
-            'https://png.pngtree.com/element_our/sm/20180327/sm_5aba147bcacf2.png',
-          );
+          .android.setSmallIcon('ic_launcher');
         firebase.notifications().displayNotification(local);
       });
 
     this.notificationOpenedListener = firebase
       .notifications()
       .onNotificationOpened(notificationOpen => {
-        const {title, body} = notificationOpen.notification;
-        console.log('I am calling 1', notificationOpen);
+        const {subtitle, title, body} = notificationOpen.notification;
         this.showAlert(title, body);
       });
 
@@ -102,15 +97,15 @@ class App extends React.Component {
       {cancelable: false},
     );
   };
-  connectToSocketServer = async (table_id, table_name, username) => {
-    await this.setState({username: username});
 
+  connectToSocketServer = async (table_id, table_name, username) => {
+    const fcmToken = await firebase.messaging().getToken();
+    await this.setState({username: username, table_name: table_name, table_id});
     this.socket = io(socketurl, {
-      query: `table_id=${table_id}&table_name=${table_name}&username=${username}`,
+      query: `table_id=${table_id}&table_name=${table_name}&username=${username}&token=${fcmToken}`,
     });
 
     await this.setState({socket_object: this.socket});
-
     this.socket.on(
       'self-acknowledge',
       function(data) {
@@ -120,6 +115,18 @@ class App extends React.Component {
 
     this.socket.on(
       'add-tables',
+      function(data) {
+        console.log('I am calling ...', data);
+        let newTables = data.tables.filter(item => {
+          return item.username !== this.state.username;
+        });
+
+        this.setState({tables: newTables});
+      }.bind(this),
+    );
+
+    this.socket.on(
+      'remove-tables',
       function(data) {
         let newTables = data.tables.filter(item => {
           return item.username !== this.state.username;
@@ -151,7 +158,14 @@ class App extends React.Component {
           )}
         </Stack.Screen>
         <Stack.Screen name="ChatInterface">
-          {props => <ChatInterface {...props} username={this.state.username} />}
+          {props => (
+            <ChatInterface
+              {...props}
+              table_id={this.state.table_id}
+              table_name={this.state.table_name}
+              username={this.state.username}
+            />
+          )}
         </Stack.Screen>
       </Stack.Navigator>
     );

@@ -32,10 +32,12 @@ export default class ChatInterface extends React.Component {
       this._keyboardDidShow,
     );
     const {table} = this.props.route.params;
-    console.log(`${this.props.username}-${table.username}`);
     await this.setState({
-      user_id: this.props.username,
-      profile_id: table.username,
+      table_name: this.props.table_name,
+      username: this.props.username,
+      sender_token: table.token,
+      user_id: this.props.table_id,
+      profile_id: table.table_id,
     });
     this.socket = this.props.route.params.socketRef;
 
@@ -80,7 +82,9 @@ export default class ChatInterface extends React.Component {
     const data = {
       room_name: `${this.state.user_id}-${this.state.profile_id}`,
       message: message,
-      user: this.state.user,
+      username: this.state.username,
+      table_name: this.state.table_name,
+      sender_token: this.state.sender_token,
       sender_id: this.state.user_id,
       receiver_id: this.state.profile_id,
     };
