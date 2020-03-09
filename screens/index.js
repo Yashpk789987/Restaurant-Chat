@@ -53,6 +53,7 @@ class App extends React.Component {
     this.notificationListener = firebase
       .notifications()
       .onNotification(notification => {
+        console.log('Notification', notification);
         const local = new firebase.notifications.Notification()
           .setNotificationId('notificationId')
           .setTitle(notification.title)
@@ -63,7 +64,7 @@ class App extends React.Component {
             key2: 'value2',
           });
         local.android
-          .setChannelId('channelId')
+          .setChannelId('test-channel')
           .android.setSmallIcon('ic_launcher');
         firebase.notifications().displayNotification(local);
       });

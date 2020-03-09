@@ -155,6 +155,7 @@ export default class ChatInterface extends React.Component {
         {this.state.emoji_modal ? (
           <Container style={{flex: 1}}>
             <EmojiInput
+              renderAheadOffset={200}
               numColumns={8}
               emojiFontSize={30}
               onEmojiSelected={emoji => {
